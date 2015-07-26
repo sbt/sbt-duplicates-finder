@@ -1,3 +1,3 @@
-organization := "com.typesafe.sbt"
+organization := "org.scala-sbt"
 
 sbtPlugin := true
