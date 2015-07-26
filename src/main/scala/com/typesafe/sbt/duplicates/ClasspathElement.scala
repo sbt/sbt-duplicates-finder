@@ -8,7 +8,7 @@ import sbt._
 object ClasspathElement {
 
   def apply(base: File): ClasspathElement =
-    if(base.isDirectory) buildFromDirectory(base) else buildFromJar(base)
+    if (base.isDirectory) buildFromDirectory(base) else buildFromJar(base)
 
   private def apply(base: File, classes: Seq[String], resources: Seq[String]): ClasspathElement =
     ClasspathElement(base, classes.map(c => computeSha(base, c)).toMap, resources.map(r => computeSha(base, r)).toMap)
@@ -31,7 +31,7 @@ object ClasspathElement {
       digestBytes.map(byte => f"$byte%02X").foldLeft(StringBuilder.newBuilder)(_ append _).mkString
     }
 
-    if(base.isDirectory)
+    if (base.isDirectory)
       path -> sha(IO.readBytes(base / path))
     else
       Using.zipFile(base) { zipFile =>
@@ -49,5 +49,5 @@ case class ClasspathElement(source: File, classes: Map[String, String], resource
   def resourcesChecksums = checksums(resources)
 
   private def checksums(map: Map[String, String]): Map[String, Checksum] =
-    map.map{ case (k,v) => k -> Checksum(source, v) }
+    map.map { case (k, v) => k -> Checksum(source, v) }
 }
