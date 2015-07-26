@@ -7,7 +7,8 @@ object DuplicatesFinderPlugin extends AutoPlugin {
 
   override def requires = plugins.JvmPlugin
   override def trigger = allRequirements
-  override def projectSettings = baseSettings
+  override def projectSettings =
+    Seq(Compile, Test, Runtime).flatMap(inConfig(_)(baseSettings))
 
   val autoImport = DuplicatesFinderKeys
 
@@ -20,7 +21,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
 
   private lazy val checkDuplicates0 = Def.task {
     val log = streams.value.log
-    val classpath = Classpath((fullClasspath in Runtime).value.files, excludePatterns.value)
+    val classpath = Classpath(fullClasspath.value.files, excludePatterns.value)
     logDuplicates(classpath.classesDuplicates, log, "classes")
     logDuplicates(classpath.resourcesDuplicates, log, "resources")
   }
