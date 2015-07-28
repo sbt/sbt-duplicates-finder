@@ -17,7 +17,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
   import autoImport._
 
   lazy val baseSettings = Seq(
-    excludePatterns := List("^META-INF/.*"),
+    excludePatterns := List("^META-INF/.*", "reference.conf"),
     reportDuplicatesWithSameContent := false,
     includeBootClasspath := false,
     checkDuplicates <<= checkDuplicates0
