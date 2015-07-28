@@ -1,5 +1,7 @@
 package com.typesafe.sbt.duplicates
 
+import java.io.File
+
 import sbt._
 import sbt.Keys._
 
@@ -17,13 +19,15 @@ object DuplicatesFinderPlugin extends AutoPlugin {
   lazy val baseSettings = Seq(
     excludePatterns := List("^META-INF/.*"),
     reportDuplicatesWithSameContent := false,
+    includeBootClasspath := false,
     checkDuplicates <<= checkDuplicates0
   )
 
   private lazy val checkDuplicates0 = Def.task {
     val log = streams.value.log
     val reportSameContent = reportDuplicatesWithSameContent.value
-    val classpath = Classpath(fullClasspath.value.files, excludePatterns.value)
+    val additionalClasspath = if(includeBootClasspath.value) bootClasspath else Seq.empty
+    val classpath = Classpath(fullClasspath.value.files ++ additionalClasspath, excludePatterns.value)
     logDuplicates(classpath.classesDuplicates, log, "classes", reportSameContent)
     logDuplicates(classpath.resourcesDuplicates, log, "resources", reportSameContent)
   }
@@ -41,4 +45,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
         }
       }
     }
+
+  private def bootClasspath: Seq[File] =
+    sys.props("sun.boot.class.path").split(File.pathSeparator).map(new File(_)).filter(_.exists())
 }
