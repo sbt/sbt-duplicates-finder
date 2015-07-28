@@ -6,7 +6,7 @@ import sbt.File
 
 case class Classpath(classpath: Seq[File], excludePatterns: Seq[String]) {
 
-  private val classpathElements = classpath.map(ClasspathElement.apply)
+  private val classpathElements = classpath.collect { case f if f.exists() => ClasspathElement(f) }
   private val allClassesChecksums = sourcesAndChecksumsByName(classpathElements.map(_.classesChecksums))
   private val allResourcesChecksums = sourcesAndChecksumsByName(classpathElements.map(_.resourcesChecksums))
   val classesDuplicates = findDuplicates(allClassesChecksums).toList

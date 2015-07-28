@@ -47,5 +47,5 @@ object DuplicatesFinderPlugin extends AutoPlugin {
     }
 
   private def bootClasspath: Seq[File] =
-    sys.props("sun.boot.class.path").split(File.pathSeparator).map(new File(_)).filter(_.exists())
+    sys.props("sun.boot.class.path").split(File.pathSeparator).map(new File(_))
 }
