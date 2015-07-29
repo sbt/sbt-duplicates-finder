@@ -7,7 +7,7 @@ The `sbt-duplicates-finder` plugin offers utilities to help you find classes or 
 Add the following line to your `project/plugins.sbt`:
 
 ```
-addSbtPlugin("org.scala-sbt" % "sbt-duplicates-finder" % "0.6.0")
+addSbtPlugin("org.scala-sbt" % "sbt-duplicates-finder" % "0.7.0")
 ```
 
 Since `sbt-duplicates-finder` is an AutoPlugin, it will be automatically available to your projects.
@@ -30,6 +30,10 @@ same content are reported.
 #### `excludePatterns`
 
 This setting, defaulting to `Seq(^META-INF/.*)`, allows to exclude filenames matching one of these patterns from the duplicates report.
+
+#### `includeBootClasspath`
+
+This settinge defaulting to `false`, allows to include the boot classpath in the search for duplicates. This allows to detect classes that conflict with JDK classes.
 
 # License
 
