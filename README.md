@@ -33,7 +33,7 @@ This setting, defaulting to `Seq(^META-INF/.*)`, allows to exclude filenames mat
 
 #### `includeBootClasspath`
 
-This settinge defaulting to `false`, allows to include the boot classpath in the search for duplicates. This allows to detect classes that conflict with JDK classes.
+This setting defaulting to `false`, allows to include the boot classpath in the search for duplicates. This allows to detect classes that conflict with JDK classes.
 
 # License
 
