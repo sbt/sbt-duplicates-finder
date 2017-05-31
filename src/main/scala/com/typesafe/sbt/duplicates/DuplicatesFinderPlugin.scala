@@ -20,7 +20,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
     excludePatterns := List("^META-INF/.*", "reference.conf"),
     reportDuplicatesWithSameContent := false,
     includeBootClasspath := false,
-    checkDuplicates <<= checkDuplicates0
+    checkDuplicates := checkDuplicates0.value
   )
 
   private lazy val checkDuplicates0 = Def.task {
