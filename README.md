@@ -1,5 +1,7 @@
 # sbt-duplicates-finder
 
+[![Travis branch](https://img.shields.io/travis/sbt/sbt-duplicates-finder/master.svg)]()
+
 The `sbt-duplicates-finder` plugin offers utilities to help you find classes or resources that could create conflicts in your classpath.
 
 ## Adding to your project
