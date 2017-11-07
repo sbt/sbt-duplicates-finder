@@ -2,7 +2,7 @@ package com.typesafe.sbt.duplicates
 
 import java.io.File
 
-import sbt.{Def, _}
+import sbt._
 import sbt.Keys._
 
 object DuplicatesFinderPlugin extends AutoPlugin {
@@ -36,7 +36,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
       case ic: InlineConfiguration ⇒ ic.module.name
       case hm: HasModule if hm.getClass.getName == "sbt.InlineConfigurationWithExcludes" ⇒ hm.module.name
       case _ ⇒
-        throw new IllegalStateException("sbt-dependency-graph plugin currently only supports InlineConfiguration of ivy settings (the default in sbt)")
+        throw new IllegalStateException("sbt-duplicates-finder plugin currently only supports InlineConfiguration of ivy settings (the default in sbt)")
     }
 
   private lazy val reportFileName = Def.task {
