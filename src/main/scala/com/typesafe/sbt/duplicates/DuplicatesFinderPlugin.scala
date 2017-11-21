@@ -5,6 +5,8 @@ import java.io.File
 import sbt._
 import sbt.Keys._
 
+import scala.language.reflectiveCalls
+
 object DuplicatesFinderPlugin extends AutoPlugin {
 
   override def requires = plugins.JvmPlugin
@@ -31,7 +33,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
     val module: ModuleID
   }
 
-  def crossName(ivyModule: IvySbt#Module) =
+  def crossName(ivyModule: Compat.IvySbt#Module) =
     ivyModule.moduleSettings match {
       case ic: InlineConfiguration ⇒ ic.module.name
       case hm: HasModule if hm.getClass.getName == "sbt.InlineConfigurationWithExcludes" ⇒ hm.module.name
@@ -52,10 +54,10 @@ object DuplicatesFinderPlugin extends AutoPlugin {
   private lazy val reportDuplicates0 = Def.task {
     val Seq(classConflicts, resourceConflicts) = findDuplicates.value
     val logLines = createLogLines(classConflicts, "class") ++ createLogLines(resourceConflicts, "resource")
+    val outputFile = reportFileName.value
+    streams.value.log.info(s"*** sbt-duplicates-finder: report written to ${outputFile.getCanonicalPath}")
     if (logLines.nonEmpty) {
-      val outputFile = reportFileName.value
       IO.writeLines(outputFile, logLines)
-      streams.value.log.info(s"*** sbt-duplicates-finder: report written to ${outputFile.getCanonicalPath}")
       Some(outputFile)
     } else None
   }
@@ -78,7 +80,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
           conflict.conflicts.map(file ⇒ s"\t - $file")
       }
     } else
-      Seq[String]()
+      Seq.empty[String]
   }
 
   private lazy val checkDuplicates0 = Def.task {
@@ -88,7 +90,8 @@ object DuplicatesFinderPlugin extends AutoPlugin {
     logDuplicates(resourceConflicts, log, "resources")
   }
 
-  private def logDuplicates(duplicates: List[Conflict], log: Logger, name: String) = createLogLines(duplicates, name).foreach(l ⇒ log.warn(l))
+  private def logDuplicates(duplicates: List[Conflict], log: Logger, name: String): Unit =
+    createLogLines(duplicates, name).foreach(l ⇒ log.warn(l))
 
   private def bootClasspath: Seq[File] =
     sys.props("sun.boot.class.path").split(File.pathSeparator).map(new File(_))
