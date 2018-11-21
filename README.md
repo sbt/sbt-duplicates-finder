@@ -9,7 +9,7 @@ The `sbt-duplicates-finder` plugin offers utilities to help you find classes or 
 Add the following line to your `project/plugins.sbt`:
 
 ```
-addSbtPlugin("org.scala-sbt" % "sbt-duplicates-finder" % "0.7.0")
+addSbtPlugin("org.scala-sbt" % "sbt-duplicates-finder" % "0.8.1")
 ```
 
 Since `sbt-duplicates-finder` is an AutoPlugin, it will be automatically available to your projects.
