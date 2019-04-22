@@ -4,15 +4,22 @@
 
 The `sbt-duplicates-finder` plugin offers utilities to help you find classes or resources that could create conflicts in your classpath.
 
+
 ## Adding to your project
 
 Add the following line to your `project/plugins.sbt`:
 
 ```
-addSbtPlugin("org.scala-sbt" % "sbt-duplicates-finder" % "0.8.1")
+addSbtPlugin("com.github.sbt" % "sbt-duplicates-finder" % "1.0.0")
 ```
 
 Since `sbt-duplicates-finder` is an AutoPlugin, it will be automatically available to your projects.
+
+### 1.0.0 changes
+
+With the 1.0.0 release, organizations are package hierarchy changed:
+* Organization moved from `org.scala-sbt` to `com.github.sbt`
+* Package moved from `com.typesafe.sbt.duplicates` to `com.github.sbt.duplicates`
 
 ## Usage
 
@@ -21,6 +28,12 @@ Since `sbt-duplicates-finder` is an AutoPlugin, it will be automatically availab
 ```
 
 List all resources and classes conflicts found (searching in the project's dependencies and own classes).
+
+```
+> checkDuplicatesTest
+```
+
+Same as `checkDuplicates`, but fails the build if duplicates classes or resources are found.
 
 ### Settings
 
