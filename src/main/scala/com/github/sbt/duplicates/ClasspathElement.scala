@@ -14,19 +14,21 @@ object ClasspathElement {
     ClasspathElement(base, classes.map(c => computeSha(base, c)).toMap, resources.map(r => computeSha(base, r)).toMap)
 
   private def buildFromDirectory(base: File): ClasspathElement = {
-    val (classes, resources) = base.**(-DirectoryFilter).pair(Compat.relativeTo(base)).map(_._2).partition(_.endsWith(".class"))
+    val (classes, resources) =
+      base.**(-DirectoryFilter).pair(Compat.relativeTo(base)).map(_._2).partition(_.endsWith(".class"))
     ClasspathElement(base, classes, resources)
   }
 
   private def buildFromJar(base: File): ClasspathElement =
     Compat.Using.zipFile(base) { zip =>
-      val (classes, resources) = zip.entries().asScala.filterNot(_.isDirectory).map(_.getName).toList.partition(_.endsWith(".class"))
+      val (classes, resources) =
+        zip.entries().asScala.filterNot(_.isDirectory).map(_.getName).toList.partition(_.endsWith(".class"))
       ClasspathElement(base, classes, resources)
     }
 
   private def computeSha(base: File, path: String): (String, String) = {
     def sha(bytes: Array[Byte]): String = {
-      val md = MessageDigest.getInstance("SHA-256")
+      val md          = MessageDigest.getInstance("SHA-256")
       val digestBytes = md.digest(bytes)
       digestBytes.map(byte => f"$byte%02X").foldLeft(StringBuilder.newBuilder)(_ append _).mkString
     }
@@ -45,7 +47,7 @@ object ClasspathElement {
   }
 }
 case class ClasspathElement(source: File, classes: Map[String, String], resources: Map[String, String]) {
-  def classesChecksums: Map[String, Checksum] = checksums(classes)
+  def classesChecksums: Map[String, Checksum]   = checksums(classes)
   def resourcesChecksums: Map[String, Checksum] = checksums(resources)
 
   private def checksums(map: Map[String, String]): Map[String, Checksum] =

@@ -35,26 +35,28 @@ object DuplicatesFinderPlugin extends AutoPlugin {
 
   def crossName(ivyModule: Compat.IvySbt#Module) =
     ivyModule.moduleSettings match {
-      case ic: InlineConfiguration ⇒ ic.module.name
-      case hm: HasModule if hm.getClass.getName == "sbt.InlineConfigurationWithExcludes" ⇒ hm.module.name
-      case _ ⇒
-        throw new IllegalStateException("sbt-duplicates-finder plugin currently only supports InlineConfiguration of ivy settings (the default in sbt)")
+      case ic: InlineConfiguration                                                       => ic.module.name
+      case hm: HasModule if hm.getClass.getName == "sbt.InlineConfigurationWithExcludes" => hm.module.name
+      case _ =>
+        throw new IllegalStateException(
+          "sbt-duplicates-finder plugin currently only supports InlineConfiguration of ivy settings (the default in sbt)"
+        )
     }
 
   private lazy val reportFileName = Def.task {
-    val crossTarget = Keys.crossTarget.value
-    val projectID = Keys.projectID.value
-    val ivyModule = Keys.ivyModule.value
+    val crossTarget   = Keys.crossTarget.value
+    val projectID     = Keys.projectID.value
+    val ivyModule     = Keys.ivyModule.value
     val configuration = Keys.configuration.value.name
-    val org = projectID.organization
-    val name = crossName(ivyModule)
+    val org           = projectID.organization
+    val name          = crossName(ivyModule)
     file(s"$crossTarget/resolution-cache/reports/$org-$name-$configuration.duplicates.log")
   }
 
   private lazy val reportDuplicates0 = Def.task {
     val Seq(classConflicts, resourceConflicts) = findDuplicates.value
-    val logLines = createLogLines(classConflicts, "class") ++ createLogLines(resourceConflicts, "resource")
-    val outputFile = reportFileName.value
+    val logLines                               = createLogLines(classConflicts, "class") ++ createLogLines(resourceConflicts, "resource")
+    val outputFile                             = reportFileName.value
     streams.value.log.info(s"*** sbt-duplicates-finder: report written to ${outputFile.getCanonicalPath}")
     if (logLines.nonEmpty) {
       IO.writeLines(outputFile, logLines)
@@ -65,33 +67,32 @@ object DuplicatesFinderPlugin extends AutoPlugin {
   private lazy val findDuplicates = Def.task {
     val reportIfSameContent = reportDuplicatesWithSameContent.value
     val additionalClasspath = if (includeBootClasspath.value) bootClasspath else Seq.empty
-    val classpath = Classpath(fullClasspath.value.files ++ additionalClasspath, excludePatterns.value)
+    val classpath           = Classpath(fullClasspath.value.files ++ additionalClasspath, excludePatterns.value)
 
     Seq(classpath.classesDuplicates, classpath.resourcesDuplicates)
-      .map(_.filter(conflict ⇒ !(reportIfSameContent && conflict.conflictState == ConflictState.ContentEqual))
-      )
+      .map(_.filter(conflict => !(reportIfSameContent && conflict.conflictState == ConflictState.ContentEqual)))
   }
 
   private def createLogLines(duplicates: List[Conflict], name: String): Seq[String] = {
     val count = duplicates.length
     if (count > 0) {
-      Seq(s"Detected $count $name conflicts:") ++ duplicates.flatMap { conflict ⇒
+      Seq(s"Detected $count $name conflicts:") ++ duplicates.flatMap { conflict =>
         Seq("", s"- ${conflict.name}: ${conflict.conflictState}") ++
-          conflict.conflicts.map(file ⇒ s"\t - $file")
+          conflict.conflicts.map(file => s"\t - $file")
       }
     } else
       Seq.empty[String]
   }
 
   private lazy val checkDuplicates0 = Def.task {
-    val log = streams.value.log
+    val log                                    = streams.value.log
     val Seq(classConflicts, resourceConflicts) = findDuplicates.value
     logDuplicates(classConflicts, log, "classes")
     logDuplicates(resourceConflicts, log, "resources")
   }
 
   private def logDuplicates(duplicates: List[Conflict], log: Logger, name: String): Unit =
-    createLogLines(duplicates, name).foreach(l ⇒ log.warn(l))
+    createLogLines(duplicates, name).foreach(l => log.warn(l))
 
   private def bootClasspath: Seq[File] =
     sys.props("sun.boot.class.path").split(File.pathSeparator).map(new File(_))
