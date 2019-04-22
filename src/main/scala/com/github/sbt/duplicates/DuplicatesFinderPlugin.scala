@@ -25,7 +25,8 @@ object DuplicatesFinderPlugin extends AutoPlugin {
     reportDuplicatesWithSameContent := false,
     includeBootClasspath := false,
     reportDuplicates := reportDuplicates0.value,
-    checkDuplicates := checkDuplicates0.value
+    checkDuplicates := checkDuplicates0.value,
+    checkDuplicatesTest := checkDuplicatesTest0.value
   )
   // Borrowed from https://github.com/jrudolph/sbt-dependency-graph/master/src/main/scala/net/virtualvoid/sbt/graph/DependencyGraphSettings.scala
   // This is to support 0.13.8's InlineConfigurationWithExcludes while not forcing 0.13.8
@@ -89,6 +90,15 @@ object DuplicatesFinderPlugin extends AutoPlugin {
     val Seq(classConflicts, resourceConflicts) = findDuplicates.value
     logDuplicates(classConflicts, log, "classes")
     logDuplicates(resourceConflicts, log, "resources")
+  }
+
+  private lazy val checkDuplicatesTest0 = Def.task {
+    val Seq(classConflicts, resourceConflicts) = findDuplicates.value
+    if (classConflicts.nonEmpty || resourceConflicts.nonEmpty) {
+      val classesMessage   = createLogLines(classConflicts, "classes")
+      val resourcesMessage = createLogLines(resourceConflicts, "resources")
+      throw new DuplicatesDetectedException((classesMessage ++ resourcesMessage).mkString("\n"))
+    }
   }
 
   private def logDuplicates(duplicates: List[Conflict], log: Logger, name: String): Unit =
