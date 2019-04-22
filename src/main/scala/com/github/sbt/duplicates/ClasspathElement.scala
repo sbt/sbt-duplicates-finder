@@ -1,4 +1,4 @@
-package com.typesafe.sbt.duplicates
+package com.github.sbt.duplicates
 
 import java.security.MessageDigest
 

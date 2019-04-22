@@ -1,4 +1,4 @@
-package com.typesafe.sbt.duplicates
+package com.github.sbt.duplicates
 
 sealed trait ConflictState
 object ConflictState {
