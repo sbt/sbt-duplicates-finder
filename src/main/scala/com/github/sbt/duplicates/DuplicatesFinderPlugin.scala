@@ -76,12 +76,12 @@ object DuplicatesFinderPlugin extends AutoPlugin {
 
   private def createLogLines(duplicates: List[Conflict], name: String): Seq[String] = {
     val count = duplicates.length
-    if (count > 0) {
+    if (count > 0)
       Seq(s"Detected $count $name conflicts:") ++ duplicates.flatMap { conflict =>
         Seq("", s"- ${conflict.name}: ${conflict.conflictState}") ++
           conflict.conflicts.map(file => s"\t - $file")
       }
-    } else
+    else
       Seq.empty[String]
   }
 
