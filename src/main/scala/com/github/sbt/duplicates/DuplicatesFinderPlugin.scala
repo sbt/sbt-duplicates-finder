@@ -71,7 +71,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
     val classpath           = Classpath(fullClasspath.value.files ++ additionalClasspath, excludePatterns.value)
 
     Seq(classpath.classesDuplicates, classpath.resourcesDuplicates)
-      .map(_.filter(conflict => !(reportIfSameContent && conflict.conflictState == ConflictState.ContentEqual)))
+      .map(_.filter(conflict => conflict.conflictState == ConflictState.ContentDiffer || reportIfSameContent))
   }
 
   private def createLogLines(duplicates: List[Conflict], name: String): Seq[String] = {
