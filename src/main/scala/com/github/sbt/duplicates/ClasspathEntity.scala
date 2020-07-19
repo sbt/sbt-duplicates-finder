@@ -5,6 +5,7 @@ import java.nio.file.Files
 import java.security.{DigestInputStream, MessageDigest}
 
 import sbt._
+import sbt.io.Using
 
 /**
   * Lazy & comparable handle to a class or resource within a zip file or directory.
@@ -63,9 +64,9 @@ final class ZipEntity(
 ) extends ClasspathEntity {
 
   override protected def withInputStream[T](f: InputStream => T): T =
-    Compat.Using.zipFile(source) { zipFile =>
+    Using.zipFile(source) { zipFile =>
       Option(zipFile.getEntry(name))
-        .map(entry => Compat.Using.bufferedInputStream(zipFile.getInputStream(entry))(f))
+        .map(entry => Using.bufferedInputStream(zipFile.getInputStream(entry))(f))
         .getOrElse(throw new IllegalStateException(s"Could not get $name from $source"))
     }
 }
@@ -76,5 +77,5 @@ final class FileEntity(
 ) extends ClasspathEntity {
 
   override protected def withInputStream[T](f: InputStream => T): T =
-    Compat.Using.bufferedInputStream(Files.newInputStream((source / name).toPath))(f)
+    Using.bufferedInputStream(Files.newInputStream((source / name).toPath))(f)
 }
