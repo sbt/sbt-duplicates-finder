@@ -1,0 +1,35 @@
+# =========================================================
+# No conflicting files
+# =========================================================
+> core/checkDuplicatesTest
+
+# =========================================================
+# Same filename, different contents:
+# =========================================================
+# Fails because the contents differ
+-> differ/checkDuplicatesTest
+
+# reportDuplicatesWithSameContent does not matter because contents aren't equal.
+> 'set reportDuplicatesWithSameContent in differ in Compile := true'
+-> differ/checkDuplicatesTest
+
+# excludePatterns ignores the conflict
+> reload
+> 'set excludePatterns in differ in Compile += "ConflictingFile.class"'
+> differ/checkDuplicatesTest
+
+# =========================================================
+# Same filename, equal contents:
+# =========================================================
+# Passes because the contents are equal
+> equal/checkDuplicatesTest
+
+# Fails when told to report on equal files
+> 'set reportDuplicatesWithSameContent in equal in Compile := true'
+-> equal/checkDuplicatesTest
+
+# Passes if we fail on equal files, but exclude the equal file explicitly.
+> reload
+> 'set reportDuplicatesWithSameContent in equal in Compile := true'
+> 'set excludePatterns in equal in Compile += "ConflictingFile.class"'
+> equal/checkDuplicatesTest

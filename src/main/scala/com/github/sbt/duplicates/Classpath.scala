@@ -12,8 +12,8 @@ case class Classpath(classpath: Seq[File], excludePatterns: Seq[String]) {
   val classesDuplicates             = findDuplicates(allClassesChecksums).toList
   val resourcesDuplicates           = findDuplicates(allResourcesChecksums).toList
 
-  private def sourcesAndChecksumsByName(classpathElements: Seq[Map[String, Checksum]]) =
-    classpathElements.foldLeft(Map.empty[String, List[Checksum]]) {
+  private def sourcesAndChecksumsByName(classpathElements: Seq[Map[String, ClasspathEntity]]) =
+    classpathElements.foldLeft(Map.empty[String, List[ClasspathEntity]]) {
       case (map, checksums) =>
         checksums.foldLeft(map) {
           case (m, (name, checksum)) =>
@@ -22,7 +22,7 @@ case class Classpath(classpath: Seq[File], excludePatterns: Seq[String]) {
         }
     }
 
-  private def findDuplicates(allChecksums: Map[String, List[Checksum]]): Iterable[Conflict] =
+  private def findDuplicates(allChecksums: Map[String, List[ClasspathEntity]]): Iterable[Conflict] =
     allChecksums
       .filter { case (name, checksums) => checksums.size >= 2 && !excludePatterns.exists(r => name.matches(r)) }
       .flatMap {
