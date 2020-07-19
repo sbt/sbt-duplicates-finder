@@ -2,22 +2,22 @@ package com.github.sbt.duplicates
 
 import com.github.sbt.duplicates.ConflictState._
 import sbt._
+import sbt.io.IO
 import utest._
-import TestCompat._
 
 object ClasspathTests extends TestSuite {
 
-  val dir = TestCompat.SbtIO.createTemporaryDirectory
+  val dir = IO.createTemporaryDirectory
   dir.deleteOnExit()
   val scalaLibraryJar = dir / "libs" / "scala-library.jar"
   val classes         = dir / "classes"
 
   // need a class and jar. the scala library will do.
   val noneClass = None.getClass
-  SbtIO.transfer(noneClass.getProtectionDomain.getCodeSource.getLocation.openStream(), scalaLibraryJar)
-  SbtIO.transfer(noneClass.getClassLoader.getResourceAsStream("scala/None$.class"), classes / "scala" / "None$.class")
-  SbtIO.write(classes / "scala" / "Some.class", "💥 CONFLICT WITH SCALA-LIBRARY!!!".getBytes)
-  SbtIO.write(classes / "META-INF" / "MANIFEST.MF", "💥 CONFLICT WITH SCALA-LIBRARY!!!")
+  IO.transfer(noneClass.getProtectionDomain.getCodeSource.getLocation.openStream(), scalaLibraryJar)
+  IO.transfer(noneClass.getClassLoader.getResourceAsStream("scala/None$.class"), classes / "scala" / "None$.class")
+  IO.write(classes / "scala" / "Some.class", "💥 CONFLICT WITH SCALA-LIBRARY!!!".getBytes)
+  IO.write(classes / "META-INF" / "MANIFEST.MF", "💥 CONFLICT WITH SCALA-LIBRARY!!!")
 
   override val tests = utest.Tests {
     "find duplicates" - {

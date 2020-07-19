@@ -3,6 +3,7 @@ package com.github.sbt.duplicates
 import java.io.File
 
 import sbt._
+import sbt.internal.librarymanagement.IvySbt
 import sbt.Keys._
 
 import scala.language.reflectiveCalls
@@ -34,7 +35,7 @@ object DuplicatesFinderPlugin extends AutoPlugin {
     val module: ModuleID
   }
 
-  def crossName(ivyModule: Compat.IvySbt#Module) =
+  def crossName(ivyModule: IvySbt#Module) =
     ivyModule.moduleSettings match {
       case ic: InlineConfiguration                                                       => ic.module.name
       case hm: HasModule if hm.getClass.getName == "sbt.InlineConfigurationWithExcludes" => hm.module.name

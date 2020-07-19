@@ -1,6 +1,7 @@
 package com.github.sbt.duplicates
 
 import sbt._
+import sbt.io.{Path, Using}
 
 import scala.collection.JavaConverters._
 
@@ -17,13 +18,13 @@ object ClasspathElement {
   private def buildFromDirectory(base: File): ClasspathElement =
     ClasspathElement(
       base,
-      base.**(-DirectoryFilter).pair(Compat.relativeTo(base)).map(_._2).map(new FileEntity(base, _))
+      base.**(-DirectoryFilter).pair(Path.relativeTo(base)).map(_._2).map(new FileEntity(base, _))
     )
 
   private def buildFromJar(base: File): ClasspathElement =
     ClasspathElement(
       base,
-      Compat.Using.zipFile(base) { zip =>
+      Using.zipFile(base) { zip =>
         zip.entries().asScala.filterNot(_.isDirectory).map(e => new ZipEntity(base, e.getName)).toList
       }
     )

@@ -1,8 +1,8 @@
 language: scala
 jdk:
   - openjdk8
-script: 
-  - sbt ^test ^scripted ^publishLocal
+script:
+  - sbt test scripted publishLocal
   - find $HOME/.sbt -name "*.lock" | xargs rm
   - find $HOME/.ivy2 -name "ivydata-*.properties" | xargs rm
   - rm -Rf $HOME/.ivy2/cache/scala_2.10/sbt_0.13/org.scala-sbt/sbt-duplicates-finder
